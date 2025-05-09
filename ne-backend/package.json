@@ -6,8 +6,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "generate:swagger": "ts-node src/swagger/swagger.ts",
     "start": "npx tsc   && node .dist/server.js",
-    "dev": "nodemon"
-    
+    "dev": "nodemon",
+    "admin": "ts-node src/seedadmin.ts"
   },
   "keywords": [],
   "author": "",

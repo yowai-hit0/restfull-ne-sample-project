@@ -10,9 +10,9 @@ const doc = {
     title: 'Library API',
     description: 'CRUD + Booking + Auth (OTP) for library management',
   },
-  host: process.env.HOST || `localhost:${process.env.PORT || 3000}`,
+  host: process.env.HOST || `localhost:${process.env.PORT || 5000}`,
   schemes: ['http', 'https'],
-  basePath: '/',
+  basePath: '/api',
   securityDefinitions: {
     bearerAuth: {
       type: "apiKey",

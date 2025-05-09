@@ -7,10 +7,10 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/"
+      "url": "http://localhost:5000/api"
     },
     {
-      "url": "https://localhost:3000/"
+      "url": "https://localhost:5000/api"
     }
   ],
   "paths": {
@@ -202,7 +202,7 @@
         "tags": [
           "Auth"
         ],
-        "description": "Authentication endpoints (register, login, OTP, etc.)",
+        "description": "Logout user",
         "parameters": [
           {
             "name": "authorization",
@@ -216,7 +216,12 @@
           "default": {
             "description": ""
           }
-        }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     },
     "/books/": {
