@@ -17,8 +17,8 @@ export const createBooking = async (req: Request, res: Response): Promise<void> 
 
     const book = await prisma.book.findUnique({ where: { id: bookId } });
     if (!book) {
-      ServerResponse.notFound(res, `Book with id ${bookId} not found`);
-      return;
+      return ServerResponse.notFound(res, `Book with id ${bookId} not found`);
+      
     }
 
     const booking = await prisma.booking.create({
@@ -30,9 +30,9 @@ export const createBooking = async (req: Request, res: Response): Promise<void> 
       },
     });
 
-    ServerResponse.created(res, "Booking created successfully", { booking });
+    return ServerResponse.created(res, "Booking created successfully", { booking });
   } catch (error: any) {
-    ServerResponse.error(res, "Error occurred", { error });
+    return ServerResponse.error(res, "Error occurred", { error });
   }
 };
 
@@ -44,12 +44,12 @@ export const fetchBookings = async (req: Request, res: Response): Promise<void> 
     const limitNum = limit ? Number(limit) : 10;
 
     if (pageNum <= 0) {
-      ServerResponse.error(res, "Page number must be > 0", null, 400);
-      return;
+      return ServerResponse.error(res, "Page number must be > 0", null, 400);
+      
     }
     if (limitNum <= 0) {
-      ServerResponse.error(res, "Limit must be > 0", null, 400);
-      return;
+      return ServerResponse.error(res, "Limit must be > 0", null, 400);
+      
     }
 
     const where: Prisma.BookingWhereInput = {};
@@ -74,12 +74,12 @@ export const fetchBookings = async (req: Request, res: Response): Promise<void> 
       prisma.booking.count({ where }),
     ]);
 
-    ServerResponse.success(res, "Bookings fetched successfully", {
+    return ServerResponse.success(res, "Bookings fetched successfully", {
       bookings,
       meta: paginator({ page: pageNum, limit: limitNum, total }),
     });
   } catch (error: any) {
-    ServerResponse.error(res, "Error occurred", { error });
+    return ServerResponse.error(res, "Error occurred", { error });
   }
 };
 
@@ -93,17 +93,16 @@ export const findBookingById = async (req: Request, res: Response): Promise<void
       include: { book: true, user: true },
     });
     if (!booking) {
-      ServerResponse.notFound(res, `Booking with id ${id} not found`);
-      return;
+      return ServerResponse.notFound(res, `Booking with id ${id} not found`);
+
     }
     if (authReq.user.role === Role.STUDENT && booking.userId !== authReq.user.id) {
-      ServerResponse.error(res, "Forbidden", null, 403);
-      return;
+      return ServerResponse.error(res, "Forbidden", null, 403);
     }
 
-    ServerResponse.success(res, "Booking fetched successfully", { booking });
+    return ServerResponse.success(res, "Booking fetched successfully", { booking });
   } catch (error: any) {
-    ServerResponse.error(res, "Error occurred", { error });
+    return ServerResponse.error(res, "Error occurred", { error });
   }
 };
 
@@ -114,17 +113,17 @@ export const deleteBooking = async (req: Request, res: Response): Promise<void> 
 
     const booking = await prisma.booking.findUnique({ where: { id } });
     if (!booking) {
-      ServerResponse.notFound(res, `Booking with id ${id} not found`);
-      return;
+      return ServerResponse.notFound(res, `Booking with id ${id} not found`);
+
     }
     if (authReq.user.role === Role.STUDENT && booking.userId !== authReq.user.id) {
-      ServerResponse.error(res, "Forbidden", null, 403);
-      return;
+      return ServerResponse.error(res, "Forbidden", null, 403);
+
     }
 
     await prisma.booking.delete({ where: { id } });
-    ServerResponse.success(res, "Booking deleted successfully");
+    return ServerResponse.success(res, "Booking deleted successfully");
   } catch (error: any) {
-    ServerResponse.error(res, "Error occurred", { error });
+    return ServerResponse.error(res, "Error occurred", { error });
   }
 };

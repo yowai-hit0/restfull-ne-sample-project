@@ -13,6 +13,12 @@ enum Role {
 
   @@map("roles")
 }
+enum UserStatus {
+  DISABLED
+  ENABLED
+
+  @@map("user_status")
+}
 
 model User {
   id        String     @id @default(uuid())
@@ -23,7 +29,7 @@ model User {
   role      Role       @default(STUDENT)
   createdAt DateTime   @default(now()) @map("created_at")
   updatedAt DateTime   @updatedAt @map("updated_at")
-
+  status UserStatus @default(DISABLED )
   // Relationships
   createdBooks Book[]      @relation("BooksCreated")
   bookings     Booking[]   
@@ -65,9 +71,18 @@ model Booking {
   @@map("bookings")
 }
 
-model oTP {
-  id        String   @id @default(uuid())
-  email     String
-  code      String
-  createdAt DateTime @default(now()) @map("created_at")
+model OTP {
+  id         String   @id @default(uuid())
+  email      String
+  code       String
+  createdAt  DateTime @default(now()) @map("created_at")
+  expiresAt  DateTime @map("expires_at")  
+  type       OtpType  @default(ACTIVATION)
+  @@map("otps")
+}
+
+enum OtpType {
+  ACTIVATION
+  RESET
+  @@map("otp_types")
 }

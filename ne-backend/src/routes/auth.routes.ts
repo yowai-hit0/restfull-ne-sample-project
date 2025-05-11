@@ -1,12 +1,14 @@
 import { Router } from "express";
 import {
   register,
+  activate,
   login,
+  refreshToken,
+  logout,
   requestOtp,
   verifyOtp,
   forgotPassword,
   resetPassword,
-  logout,
 } from "../controllers/auth.controller";
 import { validateRequest } from "../middlewares/validate.middleware";
 import {
@@ -17,20 +19,27 @@ import {
 } from "../dtos/auth.dto";
 import { verifyAuth } from "../middlewares/auth.middleware";
 
-const authRouter = Router();
+const router = Router();
 
-authRouter.post("/register", validateRequest(RegisterDTO), register);
-authRouter.post("/login", validateRequest(LoginDTO), login);
-authRouter.post("/request-otp", validateRequest(EmailDTO), requestOtp);
-authRouter.post("/verify-otp", verifyOtp);
-authRouter.post("/forgot-password", validateRequest(EmailDTO), forgotPassword);
-authRouter.post( "/reset-password",  validateRequest(ResetPasswordDTO), resetPassword);
-authRouter.post("/logout", verifyAuth, logout
-  /*
-  #swagger.tags = ['Auth']
-  #swagger.description = 'Logout user'
-  #swagger.security = [{ "bearerAuth": [] }]
-  */
+router.post("/register", validateRequest(RegisterDTO), register);
+router.post("/activate", validateRequest(EmailDTO), activate);
+router.post("/login", validateRequest(LoginDTO), login);
+router.post("/refresh-token", refreshToken);
+router.post(
+  "/logout",
+  verifyAuth,
+  logout
+  /* #swagger.tags=['Auth'] #swagger.security=[{"bearerAuth": []}] */
 );
 
-export default authRouter;
+// Password-reset flows
+router.post("/request-otp", validateRequest(EmailDTO), requestOtp);
+router.post("/verify-otp", validateRequest(EmailDTO), verifyOtp);
+router.post("/forgot-password", validateRequest(EmailDTO), forgotPassword);
+router.post(
+  "/reset-password",
+  validateRequest(ResetPasswordDTO),
+  resetPassword
+);
+
+export default router;

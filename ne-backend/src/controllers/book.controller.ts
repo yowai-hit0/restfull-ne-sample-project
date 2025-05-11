@@ -25,18 +25,18 @@ export const createBook = async (req: Request, res: Response): Promise<void> => 
       },
     });
 
-    ServerResponse.created(res, "Book created successfully", { book });
+    return ServerResponse.created(res, "Book created successfully", { book });
   } catch (error: any) {
     if (error.code === "P2002") {
       const key = (error.meta.target as string[])[0];
-      ServerResponse.error(
+      return ServerResponse.error(
         res,
         `${key.charAt(0).toUpperCase() + key.slice(1)} (${(req.body as any)[key]}) already exists`,
         null,
         400
       );
     } else {
-      ServerResponse.error(res, "Error occurred", { error });
+      return ServerResponse.error(res, "Error occurred", { error });
     }
   }
 };
@@ -48,12 +48,10 @@ export const fetchBooks = async (req: Request, res: Response): Promise<void> => 
     const limitNum = limit ? Number(limit) : 10;
 
     if (pageNum <= 0) {
-      ServerResponse.error(res, "Page number must be > 0", null, 400);
-      return;
+      return ServerResponse.error(res, "Page number must be > 0", null, 400);
     }
     if (limitNum <= 0) {
-      ServerResponse.error(res, "Limit must be > 0", null, 400);
-      return;
+      return ServerResponse.error(res, "Limit must be > 0", null, 400);
     }
 
     const where: Prisma.BookWhereInput = {};
@@ -74,12 +72,12 @@ export const fetchBooks = async (req: Request, res: Response): Promise<void> => 
       prisma.book.count({ where }),
     ]);
 
-    ServerResponse.success(res, "Books fetched successfully", {
+    return ServerResponse.success(res, "Books fetched successfully", {
       books,
       meta: paginator({ page: pageNum, limit: limitNum, total }),
     });
   } catch (error: any) {
-    ServerResponse.error(res, "Error occurred", { error });
+    return ServerResponse.error(res, "Error occurred", { error });
   }
 };
 
@@ -88,12 +86,11 @@ export const findById = async (req: Request, res: Response): Promise<void> => {
     const id = Number(req.params.id);
     const book = await prisma.book.findUnique({ where: { id } });
     if (!book) {
-      ServerResponse.notFound(res, `Book with id ${id} not found`);
-      return;
+      return ServerResponse.notFound(res, `Book with id ${id} not found`);
     }
-    ServerResponse.success(res, "Book fetched successfully", { book });
+    return ServerResponse.success(res, "Book fetched successfully", { book });
   } catch (error: any) {
-    ServerResponse.error(res, "Error occurred", { error });
+    return ServerResponse.error(res, "Error occurred", { error });
   }
 };
 
@@ -105,18 +102,18 @@ export const updateBook = async (req: Request, res: Response): Promise<void> => 
       where: { id },
       data,
     });
-    ServerResponse.success(res, "Book updated successfully", { book });
+    return ServerResponse.success(res, "Book updated successfully", { book });
   } catch (error: any) {
     if (error.code === "P2002") {
       const key = (error.meta.target as string[])[0];
-      ServerResponse.error(
+      return ServerResponse.error(
         res,
         `${key.charAt(0).toUpperCase() + key.slice(1)} (${(req.body as any)[key]}) already exists`,
         null,
         400
       );
     } else {
-      ServerResponse.error(res, "Error occurred", { error });
+      return ServerResponse.error(res, "Error occurred", { error });
     }
   }
 };
@@ -125,8 +122,8 @@ export const deleteBook = async (req: Request, res: Response): Promise<void> => 
   try {
     const id = Number(req.params.id);
     await prisma.book.delete({ where: { id } });
-    ServerResponse.success(res, "Book deleted successfully");
+    return ServerResponse.success(res, "Book deleted successfully");
   } catch (error: any) {
-    ServerResponse.error(res, "Error occurred", { error });
+    return ServerResponse.error(res, "Error occurred", { error });
   }
 };
